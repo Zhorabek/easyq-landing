@@ -1,0 +1,83 @@
+:root {
+  --bg: #0d0d12;
+  --bg-deep: #0a0a0e;
+  --panel: #111118;
+  --card: #15151f;
+  --card-border: #222230;
+  --text: #eeedf4;
+  --muted: #888;
+  --soft: #666;
+  --faint: #444;
+  --accent: #b2d650;
+  --telegram: #2196f3;
+  --violet: #9c78f6;
+  --container: 1200px;
+  color-scheme: dark;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(178, 214, 80, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a38;
+  border-radius: 3px;
+}
+
+#root {
+  min-height: 100vh;
+}
