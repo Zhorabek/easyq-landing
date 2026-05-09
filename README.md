@@ -2,7 +2,7 @@
 
 Production-ready Vite + React + TypeScript rebuild of the EasyQ landing page.
 
-Includes English, Uzbek, and Russian localization through the language switcher in the header.
+Includes Uzbek, Russian, and English localization through the language switcher in the header. Uzbek is the default language.
 
 ## Install
 

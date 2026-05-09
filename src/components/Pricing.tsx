@@ -1,6 +1,7 @@
+import { useRef } from 'react';
 import { BUSINESS_BOT_URL } from '../data';
 import { useLanguage } from '../i18n';
-import { IconCheck } from './icons';
+import { IconArrow, IconCheck } from './icons';
 
 type PricingCardProps = {
   plan: string;
@@ -38,6 +39,24 @@ function PricingCard({ plan, price, period, features, highlighted, badge, cta }:
 
 export function Pricing() {
   const { t } = useLanguage();
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const slidePricing = (direction: -1 | 1) => {
+    const track = trackRef.current;
+    const firstCard = track?.querySelector<HTMLElement>('.pricing-card');
+
+    if (!track) return;
+
+    const styles = window.getComputedStyle(track);
+    const parsedGap = parseFloat(styles.columnGap);
+    const gap = Number.isFinite(parsedGap) ? parsedGap : 20;
+    const cardStep = firstCard ? firstCard.offsetWidth + gap : track.clientWidth * 0.85;
+
+    track.scrollBy({
+      left: cardStep * direction,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <section id="pricing" className="section section--panel">
@@ -48,10 +67,31 @@ export function Pricing() {
           <p>{t.pricing.subtitle}</p>
         </div>
 
-        <div className="pricing-grid">
-          {t.pricing.plans.map((plan) => (
-            <PricingCard key={plan.plan} {...plan} badge={t.pricing.badge} cta={t.pricing.cta} />
-          ))}
+        <div className="pricing-carousel">
+          <div className="pricing-carousel__controls">
+            <button
+              className="pricing-carousel__button pricing-carousel__button--prev"
+              type="button"
+              aria-label={t.pricing.previousLabel}
+              onClick={() => slidePricing(-1)}
+            >
+              <IconArrow size={18} />
+            </button>
+            <button
+              className="pricing-carousel__button"
+              type="button"
+              aria-label={t.pricing.nextLabel}
+              onClick={() => slidePricing(1)}
+            >
+              <IconArrow size={18} />
+            </button>
+          </div>
+
+          <div className="pricing-grid" ref={trackRef} tabIndex={0}>
+            {t.pricing.plans.map((plan) => (
+              <PricingCard key={plan.plan} {...plan} badge={t.pricing.badge} cta={t.pricing.cta} />
+            ))}
+          </div>
         </div>
 
         <p className="pricing-note">{t.pricing.note}</p>

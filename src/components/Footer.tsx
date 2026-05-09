@@ -3,12 +3,14 @@ import { useLanguage } from '../i18n';
 import { Logo } from './Logo';
 
 function linkHref(columnIndex: number, linkIndex: number) {
-  if (columnIndex === 0 && linkIndex === 0) return '#features';
+  if (columnIndex === 0 && linkIndex === 0) return '/#features';
   if (columnIndex === 0 && linkIndex === 1) return CRM_URL;
-  if (columnIndex === 0 && linkIndex === 2) return '#features';
-  if (columnIndex === 0 && linkIndex === 3) return '#pricing';
+  if (columnIndex === 0 && linkIndex === 2) return '/#features';
+  if (columnIndex === 0 && linkIndex === 3) return '/#pricing';
   if (columnIndex === 0 && linkIndex === 4) return CRM_URL;
-  if (columnIndex === 1) return '#industries';
+  if (columnIndex === 1) return '/#industries';
+  if (columnIndex === 2 && linkIndex === 0) return '/about';
+  if (columnIndex === 2 && linkIndex === 2) return '/#contact';
   return '#';
 }
 

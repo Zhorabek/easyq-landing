@@ -1,4 +1,8 @@
+import appStoreIcon from '../assets/app-store-icon.png';
+import gplayIcon from '../assets/gplay-icon.png';
 import { getTranslatedMobileFeatures, getTranslatedNearbyServices, useLanguage } from '../i18n';
+
+const storeIcons = [appStoreIcon, gplayIcon];
 
 export function MobileAppTeaser() {
   const { t } = useLanguage();
@@ -33,9 +37,9 @@ export function MobileAppTeaser() {
             </div>
 
             <div className="store-badges">
-              {t.mobile.stores.map((store) => (
+              {t.mobile.stores.map((store, index) => (
                 <div key={store.label} className="store-badge" aria-disabled="true">
-                  <span>{store.icon}</span>
+                  <img src={storeIcons[index]} alt="" aria-hidden="true" />
                   <p>
                     <small>{store.sub}</small>
                     <strong>{store.label}</strong>
