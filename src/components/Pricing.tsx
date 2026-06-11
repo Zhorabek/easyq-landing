@@ -1,100 +1,135 @@
-import { useRef } from 'react';
-import { BUSINESS_BOT_URL } from '../data';
-import { useLanguage } from '../i18n';
-import { IconArrow, IconCheck } from './icons';
+import { type CSSProperties, useState } from 'react';
+import { useLang } from '../i18n';
+import { Button, Reveal, SectionHead } from '../ui';
+import { SIGNUP_URL } from '../data';
 
-type PricingCardProps = {
-  plan: string;
-  price: string;
-  period: string;
-  highlighted?: boolean;
-  features: readonly string[];
-  badge: string;
-  cta: string;
-};
-
-function PricingCard({ plan, price, period, features, highlighted, badge, cta }: PricingCardProps) {
-  return (
-    <article className={highlighted ? 'pricing-card pricing-card--highlighted' : 'pricing-card'}>
-      {highlighted ? <span className="pricing-card__badge">{badge}</span> : null}
-      <p>{plan}</p>
-      <div className="pricing-card__price">
-        <strong>{price}</strong>
-        <span>/ {period}</span>
-      </div>
-      <hr />
-      <ul>
-        {features.map((feature) => (
-          <li key={feature}>
-            <IconCheck size={15} /> {feature}
-          </li>
-        ))}
-      </ul>
-      <a className="button pricing-card__button" href={BUSINESS_BOT_URL} target="_blank" rel="noreferrer">
-        {cta}
-      </a>
-    </article>
-  );
+function pillBtn(on: boolean): CSSProperties {
+  return {
+    fontSize: 14.5,
+    fontWeight: 700,
+    padding: '9px 18px',
+    borderRadius: 999,
+    display: 'inline-flex',
+    alignItems: 'center',
+    color: on ? 'var(--accent-ink)' : 'var(--ink-2)',
+    background: on ? 'var(--accent)' : 'transparent',
+    transition: 'all .18s ease',
+  };
 }
 
 export function Pricing() {
-  const { t } = useLanguage();
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  const slidePricing = (direction: -1 | 1) => {
-    const track = trackRef.current;
-    const firstCard = track?.querySelector<HTMLElement>('.pricing-card');
-
-    if (!track) return;
-
-    const styles = window.getComputedStyle(track);
-    const parsedGap = parseFloat(styles.columnGap);
-    const gap = Number.isFinite(parsedGap) ? parsedGap : 20;
-    const cardStep = firstCard ? firstCard.offsetWidth + gap : track.clientWidth * 0.85;
-
-    track.scrollBy({
-      left: cardStep * direction,
-      behavior: 'smooth',
-    });
-  };
-
+  const { t } = useLang();
+  const p = t.pricing;
+  const [yearly, setYearly] = useState(false);
   return (
-    <section id="pricing" className="section section--panel">
+    <section id="pricing" className="section">
       <div className="container">
-        <div className="section-heading">
-          <p className="eyebrow">{t.pricing.eyebrow}</p>
-          <h2>{t.pricing.title}</h2>
-          <p>{t.pricing.subtitle}</p>
-        </div>
-
-        <div className="pricing-carousel">
-          <div className="pricing-carousel__controls">
-            <button
-              className="pricing-carousel__button pricing-carousel__button--prev"
-              type="button"
-              aria-label={t.pricing.previousLabel}
-              onClick={() => slidePricing(-1)}
-            >
-              <IconArrow size={18} />
+        <SectionHead eyebrow={p.eyebrow} title={p.title} sub={p.sub} center max={640} />
+        {/* toggle */}
+        <Reveal style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 999, padding: 5 }}>
+            <button onClick={() => setYearly(false)} style={pillBtn(!yearly)}>
+              {p.monthly}
             </button>
-            <button
-              className="pricing-carousel__button"
-              type="button"
-              aria-label={t.pricing.nextLabel}
-              onClick={() => slidePricing(1)}
-            >
-              <IconArrow size={18} />
+            <button onClick={() => setYearly(true)} style={pillBtn(yearly)}>
+              {p.yearly}
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 800,
+                  color: yearly ? 'var(--accent-ink)' : 'var(--accent-deep)',
+                  background: yearly ? 'rgba(255,255,255,.35)' : 'var(--accent-tint)',
+                  padding: '2px 7px',
+                  borderRadius: 999,
+                  marginLeft: 7,
+                }}
+              >
+                {p.save}
+              </span>
             </button>
           </div>
-
-          <div className="pricing-grid" ref={trackRef} tabIndex={0}>
-            {t.pricing.plans.map((plan) => (
-              <PricingCard key={plan.plan} {...plan} badge={t.pricing.badge} cta={t.pricing.cta} />
-            ))}
-          </div>
+        </Reveal>
+        {/* tiers */}
+        <div className="price-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginTop: 44, alignItems: 'stretch' }}>
+          {p.tiers.map((tier, i) => {
+            const popular = i === 1;
+            return (
+              <Reveal
+                key={i}
+                delay={i * 70}
+                style={{
+                  position: 'relative',
+                  borderRadius: 22,
+                  padding: '28px 24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  background: popular ? 'var(--block)' : 'var(--card)',
+                  color: popular ? '#fff' : 'var(--ink)',
+                  border: popular ? 'none' : '1px solid var(--line)',
+                  boxShadow: popular ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
+                  transform: popular ? 'translateY(-8px)' : 'none',
+                }}
+              >
+                {popular && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: -12,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: 'var(--accent)',
+                      color: 'var(--accent-ink)',
+                      fontSize: 11.5,
+                      fontWeight: 800,
+                      letterSpacing: '.04em',
+                      textTransform: 'uppercase',
+                      padding: '5px 13px',
+                      borderRadius: 999,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {p.popular}
+                  </span>
+                )}
+                <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', color: popular ? 'var(--accent)' : 'var(--ink-3)' }}>
+                  {p.staffLabel.replace('{n}', tier.staff)}
+                </div>
+                <div style={{ marginTop: 14, display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 33, fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1 }}>{yearly ? tier.y : tier.m}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, opacity: 0.7 }}>UZS</span>
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: popular ? 'var(--on-dark-2)' : 'var(--ink-3)', marginTop: 4 }}>
+                  {p.perMonth}
+                  {yearly ? ' · ' + p.yearly : ''}
+                </div>
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: popular ? 'var(--accent)' : 'var(--accent-deep)',
+                    background: popular ? 'rgba(180,217,78,.12)' : 'var(--accent-tint)',
+                    padding: '5px 10px',
+                    borderRadius: 8,
+                    display: 'inline-block',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  {tier.tag}
+                </div>
+                <p className="pretty" style={{ fontSize: 13.5, color: popular ? 'var(--on-dark-2)' : 'var(--ink-2)', margin: '16px 0 20px', lineHeight: 1.5, flex: 1 }}>
+                  {tier.note}
+                </p>
+                <Button variant={popular ? 'primary' : 'ghost'} href={SIGNUP_URL} style={popular ? {} : { width: '100%' }}>
+                  {p.cta}
+                </Button>
+              </Reveal>
+            );
+          })}
         </div>
-
-        <p className="pricing-note">{t.pricing.note}</p>
+        <Reveal as="p" delay={120} className="muted pretty" style={{ textAlign: 'center', maxWidth: 760, margin: '30px auto 0', fontSize: 13.5, lineHeight: 1.6 }}>
+          {p.footnote}
+        </Reveal>
       </div>
     </section>
   );

@@ -1,50 +1,44 @@
 import { useEffect, useState } from 'react';
-import { AboutUs } from './components/AboutUs';
-import { BotScreenshots } from './components/BotScreenshots';
-import { Comparison } from './components/Comparison';
-import { ContactPanel } from './components/ContactPanel';
-import { CRMShowcase } from './components/CRMShowcase';
-import { FAQ } from './components/FAQ';
-import { Features } from './components/Features';
-import { FinalCTA } from './components/FinalCTA';
-import { Footer } from './components/Footer';
-import { Header } from './components/Header';
+import { AppProvider, useLang } from './i18n';
+import { Nav } from './components/Nav';
 import { Hero } from './components/Hero';
+import { SocialProof } from './components/SocialProof';
+import { Problems } from './components/Problems';
 import { HowItWorks } from './components/HowItWorks';
 import { Industries } from './components/Industries';
-import { Marquee } from './components/Marquee';
-import { MobileAppTeaser } from './components/MobileAppTeaser';
-import { Payments } from './components/Payments';
+import { TelegramSection } from './components/TelegramSection';
+import { CrmSection } from './components/CrmSection';
+import { Stories } from './components/Stories';
+import { Comparison } from './components/Comparison';
 import { Pricing } from './components/Pricing';
-import { Stats } from './components/Stats';
-import { Testimonials } from './components/Testimonials';
-import { LanguageProvider, useLanguage } from './i18n';
+import { FAQ } from './components/FAQ';
+import { FinalCTA } from './components/FinalCTA';
+import { Footer } from './components/Footer';
+import { AboutUs } from './components/AboutUs';
+import { Signup } from './components/Signup';
 
 function useCurrentPath() {
   const [path, setPath] = useState(() => window.location.pathname);
-
   useEffect(() => {
     const updatePath = () => setPath(window.location.pathname);
     window.addEventListener('popstate', updatePath);
     return () => window.removeEventListener('popstate', updatePath);
   }, []);
-
   return path;
 }
 
 function LandingPage() {
-  const { language, t } = useLanguage();
+  const { lang, t } = useLang();
 
   useEffect(() => {
-    document.title = `easyQ — ${t.hero.titleLine1}`;
+    document.title = `EasyQ — ${t.hero.title1}`;
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    if (description) description.content = t.hero.leadPrefix + t.hero.leadStrong + t.hero.leadSuffix;
-  }, [language, t]);
+    if (description) description.content = t.hero.sub;
+  }, [lang, t]);
 
   useEffect(() => {
     const id = window.location.hash.slice(1);
     if (!id) return;
-
     requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView();
     });
@@ -52,23 +46,19 @@ function LandingPage() {
 
   return (
     <>
-      <Header />
+      <Nav />
       <main>
         <Hero />
-        <Marquee />
-        <Features />
-        <BotScreenshots />
+        <SocialProof />
+        <Problems />
         <HowItWorks />
-        <CRMShowcase />
         <Industries />
-        <Stats />
+        <TelegramSection />
+        <CrmSection />
+        <Stories />
         <Comparison />
-        <Payments />
         <Pricing />
-        <Testimonials />
-        <MobileAppTeaser />
         <FAQ />
-        <ContactPanel />
         <FinalCTA />
       </main>
       <Footer />
@@ -77,18 +67,18 @@ function LandingPage() {
 }
 
 function AboutPage() {
-  const { language, t } = useLanguage();
+  const { lang, t } = useLang();
 
   useEffect(() => {
-    document.title = `easyQ — ${t.about.eyebrow}`;
+    document.title = `EasyQ — ${t.about.eyebrow}`;
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
     if (description) description.content = t.about.description;
-  }, [language, t]);
+  }, [lang, t]);
 
   return (
     <>
-      <Header />
-      <main className="page-main">
+      <Nav />
+      <main>
         <AboutUs />
       </main>
       <Footer />
@@ -98,18 +88,19 @@ function AboutPage() {
 
 function AppRoutes() {
   const path = useCurrentPath();
-
   if (path === '/about' || path === '/about/') {
     return <AboutPage />;
   }
-
+  if (path === '/signup' || path === '/signup/') {
+    return <Signup />;
+  }
   return <LandingPage />;
 }
 
 export default function App() {
   return (
-    <LanguageProvider>
+    <AppProvider>
       <AppRoutes />
-    </LanguageProvider>
+    </AppProvider>
   );
 }
